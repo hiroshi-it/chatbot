@@ -1,0 +1,4 @@
+reminderId,description,dayOfMonth,deadlineText
+documentEarly,提出物・事前リマインド,17,毎月指定日まで
+documentFinal,提出物・正式リマインド,20,毎月指定日まで
+reportEarly,月次提出物・事前リマインド,27,翌月指定日時まで
