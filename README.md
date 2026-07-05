@@ -1,30 +1,29 @@
 # chatbot-hiroshi-it
 
-Google Chat定期リマインドBot（Google Apps Script + Google Sheet設定）
+Google Chat定期リマインドBot（Google Apps Script + `app.config.html` 設定）
 
 ## ディレクトリ構成
 
 | ディレクトリ | 用途 |
 |-------------|------|
 | [`src/`](src/README.md) | GASソースコード（clasp push対象） |
-| [`config/sheet-schema/`](config/sheet-schema/FIELDS.md) | Sheet項目定義と入力例 |
+| [`config/`](config/FIELDS.md) | `app.config.html` 項目定義・改行の書き方 |
+| [`docs/architecture/PATH.md`](docs/architecture/PATH.md) | ディレクトリ構成 |
+| [`docs/design/详细设计文档.md`](docs/design/详细设计文档.md) | 詳細設計（中国語） |
 
 ## クイックスタート
 
-1. `config/sheet-schema/FIELDS.md`に従ってGoogle Sheetを作成する
-2. `src/core/app.config.html`で固定設定を編集する
-3. Script Propertiesに`CONFIG_SHEET_ID`を設定する
-4. 本番環境ではScript Propertiesに`CHAT_WEBHOOK_URL`を設定する
-5. `clasp push`を実行する
-6. GAS上で`setupDispatchTrigger()`を実行し、Triggerを登録する
-7. `dryRunDispatch()`で設定と送信対象を確認する
-8. 必要に応じて`sendTestToSpace()`または`sendTestToThread()`で送信確認を行う
+1. `src/core/app.config.html` で文案・日程・配信時刻を編集する
+2. 本番環境では Script Properties に `CHAT_WEBHOOK_URL` を設定する
+3. `clasp push` を実行する
+4. GAS 上で `setupDispatchTrigger()` を実行し、Trigger を登録する
+5. `dryRunDispatch()` で設定と送信対象を確認する
+6. 必要に応じて `sendTestToSpace()` または `sendTestToThread()` で送信確認を行う
 
 ## アーキテクチャ概要
 
 ```text
-app.config.html（JSON固定設定）
-+ Google Sheet（運用設定）
+app.config.html（全設定）
 + Script Properties（環境依存値・機密情報）
         ↓
 ConfigBuilder
@@ -41,39 +40,37 @@ Google Chat
 ### JSON — `src/core/app.config.html`
 
 **単一JSON設定ファイル**です。
-拡張子は`.html`ですが、GAS実行時に読み込むための都合であり、中身はJSONとして扱います。
+拡張子は `.html` ですが、GAS 実行時に読み込むための都合であり、中身は JSON として扱います。
 
-JSON側では、Git管理してよい固定設定を管理します。
+| 区分 | 項目 | 説明 |
+| ---- | ---- | ---- |
+| グループ | groupId, groupName | 識別情報 |
+| 配信 | dispatch.hour, dispatch.minute, dispatch.timezone | 毎日の判定時刻 |
+| Chat | chat.threadName, chat.mentionAll | Chat 送信のデフォルト（Webhook は Script Properties） |
+| 各 reminder | enabled, description, bodyText, deadlineText, dayOfMonth, linkUrl, linkLabel | reminder ごとの文案・日程 |
 
-| 区分        | 項目                                                 | 説明              |
-| --------- | -------------------------------------------------- | --------------- |
-| グループ      | groupId, groupName                                 | 識別情報            |
-| 配信        | dispatch.hour, dispatch.minute, dispatch.timezone  | 毎日の判定時刻         |
-| Chat      | chat.threadName, chat.mentionAll                   | Chat送信のデフォルト設定  |
-| 各reminder | enabled, bodyText, linkUrl, linkLabel | reminderごとの固定設定 |
+本番環境の `CHAT_WEBHOOK_URL` は Script Properties で管理します。
+Git 管理対象の JSON には本番 Webhook URL を記載しません。
 
-本番環境の`CHAT_WEBHOOK_URL`はScript Propertiesで管理します。
-Git管理対象のJSONには本番Webhook URLを記載しません。
+週報の送信曜日（金曜）はコード固定（`WEEKLY_REPORT_DAY_OF_WEEK`）で、JSON からは変更できません。
 
-### Sheet — 3タブ
+#### 改行（`bodyText` など）
 
-Sheet側では、運用時に変更される項目のみを管理します。
+JSON 文字列内の **`\n`** は、パース後に実際の改行文字になる。
 
-| タブ               | 列                                                 | 対応reminder                                  |
-| ---------------- | ------------------------------------------------- | ------------------------------------------- |
-| `weekly`         | description, deadlineText                         | weeklyReport                                |
-| `monthly`        | reminderId, description, dayOfMonth, deadlineText | documentEarly / documentFinal / reportEarly |
-| `lastDayOfMonth` | description, deadlineText                         | reportFinal                                 |
+- **`bodyText`**：`parseBodyTextLines` で行分割され、Google Chat で複数行表示される（推奨）
+- **`linkLabel` / `deadlineText`**：1 行想定。`\n` ではリンク表示名の改行にはならない
+
+詳細は [`config/FIELDS.md`](config/FIELDS.md) を参照。
 
 ### Script Properties
 
-環境依存値および機密情報はScript Propertiesで管理します。
+環境依存値および機密情報は Script Properties で管理します。
 
-| キー                 | 説明                      |
-| ------------------ | ----------------------- |
-| `CONFIG_SHEET_ID`  | 設定用Google SheetのID      |
+| キー | 説明 |
+| ---- | ---- |
 | `CHAT_WEBHOOK_URL` | Google Chat Webhook URL |
-| `CHAT_THREAD_NAME` | 返信先threadName。必要な場合のみ設定 |
+| `CHAT_THREAD_NAME` | 返信先 threadName。必要な場合のみ設定 |
 
 ## 実行フロー
 
@@ -92,8 +89,7 @@ dailyReminderDispatcher
 
 ```mermaid
 flowchart LR
-  JSON["app.config.html<br/>固定設定"]
-  SHEET["Google Sheet<br/>運用設定"]
+  JSON["app.config.html<br/>全設定"]
   PROPS["Script Properties"]
   BUILDER["ConfigBuilder"]
   CONFIG["runtime config"]
@@ -101,8 +97,6 @@ flowchart LR
   CHAT["ChatService"]
 
   JSON --> BUILDER
-  SHEET --> BUILDER
-  PROPS -->|"CONFIG_SHEET_ID"| BUILDER
   BUILDER --> CONFIG
   CONFIG --> PIPELINE
   PIPELINE --> CHAT
@@ -116,7 +110,7 @@ flowchart LR
 flowchart TD
   subgraph Git["Git管理"]
     SRC["src/<br/>GASソースコード"]
-    APP_CONFIG["app.config.html<br/>JSON固定設定"]
+    APP_CONFIG["app.config.html<br/>全設定"]
     REMINDER_TYPES["ReminderTypes.js<br/>reminderId定義（参照用）"]
   end
 
@@ -131,14 +125,7 @@ flowchart TD
     CHAT["ChatService"]
   end
 
-  subgraph SHEET["Google Sheet"]
-    WEEKLY["weekly"]
-    MONTHLY["monthly"]
-    LASTDAY["lastDayOfMonth"]
-  end
-
   subgraph PROPS["Script Properties"]
-    SHEET_ID["CONFIG_SHEET_ID"]
     WEBHOOK["CHAT_WEBHOOK_URL"]
     THREAD["CHAT_THREAD_NAME"]
   end
@@ -147,10 +134,6 @@ flowchart TD
 
   SRC --> GAS
   APP_CONFIG --> BUILDER
-  SHEET_ID --> BUILDER
-  WEEKLY --> BUILDER
-  MONTHLY --> BUILDER
-  LASTDAY --> BUILDER
 
   TRIGGER -->|"毎日実行"| ENTRY
   ENTRY --> PIPELINE
@@ -175,7 +158,6 @@ sequenceDiagram
   participant Pipeline as DispatchPipeline
   participant Builder as ConfigBuilder
   participant AppConfig as AppConfig
-  participant Sheet as SheetReader
   participant Validator as ConfigValidator
   participant Matcher as ScheduleMatcher
   participant Chat as ChatService
@@ -187,11 +169,8 @@ sequenceDiagram
 
   Pipeline->>Builder: loadRuntimeConfig()
   Builder->>AppConfig: getAppConfig()
-  AppConfig-->>Builder: JSON固定設定
-  Builder->>Sheet: loadSheetOverrides()
-  Note over Sheet: CONFIG_SHEET_ID を Script Properties から参照
-  Sheet-->>Builder: Sheet運用設定
-  Builder->>Builder: mergeAppConfigWithSheet()
+  AppConfig-->>Builder: app.config.html
+  Builder->>Builder: buildRuntimeConfigFromApp()
   Builder-->>Pipeline: runtime config
 
   Pipeline->>Validator: validateConfig(config)
@@ -227,22 +206,15 @@ sequenceDiagram
   end
 ```
 
-### 設定合成イメージ
+### 設定生成イメージ
 
 ```mermaid
 flowchart TD
-  JSON["app.config.html<br/>group / dispatch / chat / bodyText / link / enabled"]
-  SHEET["Google Sheet<br/>description / deadlineText / dayOfMonth"]
-  PROPS["Script Properties<br/>CONFIG_SHEET_ID"]
-
-  READER["SheetReader"]
+  JSON["app.config.html<br/>group / dispatch / chat / reminders"]
   BUILDER["ConfigBuilder"]
   RUNTIME["runtime config<br/>reminders[]"]
 
   JSON --> BUILDER
-  PROPS --> READER
-  SHEET --> READER
-  READER --> BUILDER
   BUILDER --> RUNTIME
 
   RUNTIME --> FILTER["filterDueToday"]

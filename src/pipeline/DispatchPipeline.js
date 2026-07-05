@@ -88,7 +88,7 @@ function runDispatchPipeline(options) {
 /**
  * 実行時configを読み込む。
  *
- * JSON固定設定とSheet運用設定を合成したconfigを返す。
+ * app.config.htmlから生成した実行時configを返す。
  *
  * @returns {Object} 実行時config
  */
