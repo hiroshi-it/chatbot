@@ -8,7 +8,6 @@ Google Chat定期リマインドBot（Google Apps Script + Google Sheet設定）
 |-------------|------|
 | [`src/`](src/README.md) | GASソースコード（clasp push対象） |
 | [`config/sheet-schema/`](config/sheet-schema/FIELDS.md) | Sheet項目定義と入力例 |
-| [`docs/design/`](docs/design/详细设计文档.md) | 設計ドキュメント |
 
 ## クイックスタート
 
@@ -35,7 +34,7 @@ runtime config
 dailyReminderDispatcher
         ↓
 Google Chat
-````
+```
 
 ## 設定の役割分担
 
@@ -51,7 +50,7 @@ JSON側では、Git管理してよい固定設定を管理します。
 | グループ      | groupId, groupName                                 | 識別情報            |
 | 配信        | dispatch.hour, dispatch.minute, dispatch.timezone  | 毎日の判定時刻         |
 | Chat      | chat.threadName, chat.mentionAll                   | Chat送信のデフォルト設定  |
-| 各reminder | enabled, bodyText, linkEnabled, linkUrl, linkLabel | reminderごとの固定設定 |
+| 各reminder | enabled, bodyText, linkUrl, linkLabel | reminderごとの固定設定 |
 
 本番環境の`CHAT_WEBHOOK_URL`はScript Propertiesで管理します。
 Git管理対象のJSONには本番Webhook URLを記載しません。
@@ -83,7 +82,7 @@ dailyReminderDispatcher
   → loadRuntimeConfig
   → validateConfig
   → filterDueToday
-  → composeMessage
+  → sendReminderItem
   → sendChatMessage
 ```
 

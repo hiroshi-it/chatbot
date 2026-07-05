@@ -61,5 +61,3 @@
 |------|------|
 | `../config/sheet-schema/FIELDS.md` | Sheet項目定義 |
 | `../config/sheet-schema/examples/*.csv` | Sheet入力例 |
-| `../docs/design/详细设计文档.md` | 詳細設計 |
-| `../docs/architecture/PATH.md` | アーキテクチャ概要 |
