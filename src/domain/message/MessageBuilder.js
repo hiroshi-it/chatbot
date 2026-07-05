@@ -1,7 +1,7 @@
 /**
  * メッセージ組み立て処理。
  *
- * 引数にはConfigBuilderが合成した実行時reminder項目を渡す。
+ * 引数にはConfigBuilderが生成した実行時reminder項目を渡す。
  * message.bodyLines/message.linkはConfigBuilder側で正規化済みであること。
  */
 

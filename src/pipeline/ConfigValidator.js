@@ -1,7 +1,7 @@
 /**
  * 設定検証処理。
  *
- * JSON固定設定とSheet運用設定を合成した実行時configを検証する。
+ * app.config.html から生成した実行時configを検証する。
  * エラーがある場合は例外を投げず、エラーメッセージ配列として返す。
  */
 
@@ -57,7 +57,7 @@ function validateConfig(config) {
     }
 
     if (!Array.isArray(config.reminders) || config.reminders.length === 0) {
-        errors.push('remindersが空です（Sheet: weekly / monthly / lastDayOfMonth）');
+        errors.push('remindersが空です（app.config.html）');
         return errors;
     }
 
