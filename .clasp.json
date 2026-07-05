@@ -1,0 +1,26 @@
+{
+  "scriptId": "1rz7tvsoOqjbIlhmEp8whJshcp-06CXg70T3PNb3S-rh6s3amTfWSBAVH",
+  "rootDir": "src",
+  "scriptExtensions": [".js", ".gs"],
+  "htmlExtensions": [".html"],
+  "jsonExtensions": [".json"],
+  "filePushOrder": [
+    "core/ScriptPropertyKeys.js",
+    "core/utils/ConfigUtils.js",
+    "core/utils/DateUtils.js",
+    "core/constants/ReminderTypes.js",
+    "core/app.config.html",
+    "core/AppConfig.js",
+    "infrastructure/sheet/SheetReader.js",
+    "infrastructure/sheet/ConfigBuilder.js",
+    "domain/schedule/ScheduleMatcher.js",
+    "domain/message/MessageBuilder.js",
+    "infrastructure/chat/ChatService.js",
+    "pipeline/ConfigValidator.js",
+    "pipeline/DispatchPipeline.js",
+    "pipeline/DispatchEntry.js",
+    "pipeline/TriggerSetup.js",
+    "pipeline/ManualOps.js"
+  ],
+  "skipSubdirectories": false
+}

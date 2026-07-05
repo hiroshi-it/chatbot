@@ -43,7 +43,7 @@
 
 | ファイル | 説明 |
 |------|------|
-| `DispatchPipeline.js` | 共通実行パス READ→VALIDATE→JUDGE→RENDER→SEND |
+| `DispatchPipeline.js` | 共通実行パス READ→VALIDATE→JUDGE→SEND |
 | `DispatchEntry.js` | `dailyReminderDispatcher`（Trigger入口） |
 | `ConfigValidator.js` | runtime config検証 |
 | `TriggerSetup.js` | Trigger登録・再作成 |
