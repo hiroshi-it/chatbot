@@ -42,11 +42,11 @@ function parseBodyTextLines(bodyText) {
     return [];
   }
   return String(bodyText)
-    .split('\n')
-    .map(function (line) {
-      return String(line).trim();
-    })
-    .filter(function (line) {
-      return line !== '';
-    });
+      .split('\n')
+      .map(function (line) {
+        return String(line).trim();
+      })
+      .filter(function (line) {
+        return line !== '';
+      });
 }

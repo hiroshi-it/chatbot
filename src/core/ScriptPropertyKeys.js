@@ -1,10 +1,19 @@
 /**
  * Script Properties のキー名。
  *
- * 機密情報・環境依存値のみPropertiesで管理する。
- * reminder 文案・日程は app.config.html で管理する。
+ * 機密情報: CHAT_WEBHOOK_URL / CHAT_THREAD_NAME / CHAT_SPACE_ID
+ * 運用設定: PREP_*（CSV 形式。Thread事前準備 UI から設定）
  */
 const SCRIPT_PROPERTY_KEYS = Object.freeze({
-  CHAT_WEBHOOK_URL: 'CHAT_WEBHOOK_URL',
-  CHAT_THREAD_NAME: 'CHAT_THREAD_NAME',
+    CHAT_WEBHOOK_URL: 'CHAT_WEBHOOK_URL',
+    CHAT_THREAD_NAME: 'CHAT_THREAD_NAME',
+    CHAT_SPACE_ID: 'CHAT_SPACE_ID',
+    PREP_GROUP: 'PREP_GROUP',
+    PREP_DISPATCH: 'PREP_DISPATCH',
+    PREP_CHAT: 'PREP_CHAT',
+    PREP_REMINDER_WEEKLY_REPORT: 'PREP_REMINDER_weeklyReport',
+    PREP_REMINDER_DOCUMENT_EARLY: 'PREP_REMINDER_documentEarly',
+    PREP_REMINDER_DOCUMENT_FINAL: 'PREP_REMINDER_documentFinal',
+    PREP_REMINDER_REPORT_EARLY: 'PREP_REMINDER_reportEarly',
+    PREP_REMINDER_REPORT_FINAL: 'PREP_REMINDER_reportFinal',
 });

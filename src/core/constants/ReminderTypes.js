@@ -17,7 +17,7 @@ var WEEKLY_REPORT_DAY_OF_WEEK = 5;
  * 文言、期限、URL、Thread、@all 設定などの運用情報はここには持たせない。
  *
  * 管理対象外：
- * - description
+ * - title
  * - bodyText
  * - deadlineText
  * - linkUrl / linkLabel
@@ -50,7 +50,7 @@ function getReminderType(reminderId) {
 /**
  * 定義済みのreminderId一覧を取得する。
  *
- * app.config.htmlのreminderIdバリデーションやREADME出力などで使用する。
+ * デフォルト設定のreminderIdバリデーションやREADME出力などで使用する。
  *
  * @returns {string[]} reminderId 一覧
  */
