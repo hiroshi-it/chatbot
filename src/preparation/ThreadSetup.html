@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Thread事前準備</title>
+<style>
+    :root {
+    --bg: #f5f5f7;
+    --card: #ffffff;
+    --text: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --border: rgba(0, 0, 0, 0.08);
+    --accent: #0071e3;
+    --accent-hover: #0077ed;
+    --accent-soft: rgba(0, 113, 227, 0.1);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', sans-serif;
+}
+
+    * { box-sizing: border-box; }
+
+    body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+}
+
+    .page {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 40px 20px 64px;
+}
+
+    .hero { text-align: center; margin-bottom: 28px; }
+    .hero h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+    .panels {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(0, 2fr);
+    gap: 16px;
+    align-items: start;
+}
+
+    .left-stack { display: flex; flex-direction: column; gap: 16px; }
+
+    .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+    .config-card { min-height: 640px; }
+
+    .card-title {
+    margin: 0 0 14px;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+    .card-subtitle {
+    margin: -8px 0 14px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+    .card-body { flex: 1; min-height: 0; }
+    .card-footer { margin-top: 16px; }
+
+    label.field-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--text);
+    background: #fbfbfd;
+}
+
+    textarea { min-height: 72px; resize: vertical; }
+
+    input:focus, textarea:focus {
+    outline: none;
+    border-color: rgba(0, 113, 227, 0.45);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+    background: #fff;
+}
+
+    .field { margin-bottom: 10px; }
+
+    .field-hint {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
+    .field-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+    .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+    font-size: 13px;
+}
+
+    .checkbox-row input { width: 16px; height: 16px; accent-color: var(--accent); }
+
+    .btn {
+    appearance: none;
+    border: none;
+    border-radius: 999px;
+    padding: 11px 18px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+}
+
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+    .btn-secondary {
+    background: #f2f2f7;
+    color: var(--accent);
+    width: auto;
+    padding: 8px 14px;
+    font-size: 12px;
+}
+    .btn-copy {
+    background: #f2f2f7;
+    color: var(--accent);
+    padding: 8px 14px;
+    font-size: 12px;
+    width: auto;
+}
+
+    .setting-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .setting-row {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: #fbfbfd;
+    overflow: hidden;
+}
+
+    .setting-row.open { background: #fff; border-color: rgba(0, 113, 227, 0.2); }
+
+    .setting-row-header {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    padding: 12px 14px;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+}
+
+    .setting-row-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+    .setting-row-title {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+    .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+    .badge-default { background: #eef0f3; color: var(--text-secondary); }
+    .badge-custom { background: var(--accent-soft); color: var(--accent); }
+
+    .setting-row-preview {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+    .setting-row-body {
+    display: none;
+    padding: 0 14px 14px;
+    border-top: 1px solid var(--border);
+}
+
+    .setting-row.open .setting-row-body { display: block; padding-top: 14px; }
+
+    .setting-row-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+    .result {
+    display: none;
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    background: #f8f8fa;
+    border: 1px solid var(--border);
+}
+
+    .result.visible { display: block; }
+
+    .result-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+    .result-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+    .result-value {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 11px;
+    line-height: 1.45;
+    word-break: break-all;
+    flex: 1;
+}
+
+    .result-meta, .success-note, .row-success {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
+    .success-note.visible, .row-success.visible { display: block; }
+    .success-note, .row-success {
+    display: none;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    background: #f0faf3;
+    border: 1px solid #ccebd6;
+    color: #1f7a3f;
+    font-size: 12px;
+}
+
+    .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%) translateY(16px);
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(29, 29, 31, 0.92);
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 1000;
+}
+
+    .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .loading-inline {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+    .loading-inline.visible { display: flex; }
+
+    .spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(0, 113, 227, 0.18);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-banner {
+    display: none;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: #fff2f2;
+    border: 1px solid #ffd6d6;
+    color: #b42318;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+    .error-banner.visible { display: block; }
+
+    .trigger-status {
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    background: #f8f8fa;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+}
+
+    .trigger-status-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+    .trigger-status-item {
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+}
+
+    .trigger-status-item:first-of-type {
+    border-top: none;
+    padding-top: 0;
+}
+
+    .trigger-status-empty {
+    color: var(--text-secondary);
+}
+
+    .dispatch-plan-list {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+
+    .dispatch-plan-heading {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+    .dispatch-plan-schedule {
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+    .dispatch-plan-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 5px 0;
+    font-size: 12px;
+}
+
+    .dispatch-plan-name {
+    color: var(--text);
+}
+
+    .dispatch-plan-kind {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+    .dispatch-plan-kind.is-custom {
+    color: var(--accent);
+}
+
+    .dispatch-plan-disabled {
+    margin-left: 6px;
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
+    .trigger-badge {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+    .page-loading {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+    @media (max-width: 1000px) {
+    .panels { grid-template-columns: 1fr; }
+    .field-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+    <header class="hero"><h1>Thread事前準備</h1></header>
+    <div class="page-loading" id="pageLoading">読み込み中…</div>
+
+    <div class="panels" id="panels" hidden>
+        <div class="left-stack">
+            <section class="card" aria-labelledby="webhook-title">
+                <h2 class="card-title" id="webhook-title">Chat連携用URL</h2>
+                <div class="card-body">
+                    <div class="field">
+                        <label class="field-label" for="webhookUrlInput">連携用URL</label>
+                        <input type="text" id="webhookUrlInput" autocomplete="off" spellcheck="false">
+                            <div class="field-hint">Google Chatのスペース設定からコピーした連携用URLを貼り付けてください。</div>
+                    </div>
+                    <div class="error-banner" id="webhookError"></div>
+                    <div class="success-note" id="webhookSuccess">連携用URLを保存しました。</div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary" id="webhookSaveBtn" type="button">連携用URLを保存</button>
+                    <div class="loading-inline" id="webhookLoading"><span class="spinner"></span><span>保存中…</span></div>
+                </div>
+            </section>
+
+            <section class="card" aria-labelledby="create-title">
+                <h2 class="card-title" id="create-title">新規Threadを作成</h2>
+                <div class="card-body">
+                    <div class="field">
+                        <label class="field-label" for="messageText">スレッドタイトル</label>
+                        <textarea id="messageText" placeholder="# 周知&#10;週報 / シフト表 / 勤務表&#10;============================"></textarea>
+                        <div class="field-hint">未入力の場合はデフォルト文書で作成します。</div>
+                    </div>
+                    <div class="error-banner" id="createError"></div>
+                    <div class="success-note" id="createSuccess">Threadを作成しました。</div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary" id="createBtn" type="button">Threadを作成する</button>
+                    <div class="loading-inline" id="createLoading"><span class="spinner"></span><span>作成中…</span></div>
+                </div>
+            </section>
+
+            <section class="card" aria-labelledby="trigger-title">
+                <h2 class="card-title" id="trigger-title">配信設定</h2>
+                <div class="card-body">
+                    <div class="field-hint" style="margin-top: 0; margin-bottom: 12px;">
+                        右側のリマインド設定を保存し、毎日決まった時刻に自動配信を開始します。「共通設定」で指定した配信時刻に従って動作します。
+                    </div>
+
+                    <div class="trigger-status" id="triggerStatus">
+                        <div class="trigger-status-title">配信の状態</div>
+                        <div id="triggerStatusBody" class="trigger-status-empty">読み込み中…</div>
+                    </div>
+
+                    <div class="error-banner" id="triggerError"></div>
+                    <div class="success-note" id="triggerSuccess">設定を保存し、配信を有効にしました。</div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary" id="triggerSetupBtn" type="button">設定を配信を有効にする</button>
+                    <div class="loading-inline" id="triggerLoading">
+                        <span class="spinner"></span>
+                        <span>保存して有効化中…</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <section class="card config-card" aria-labelledby="config-title">
+            <h2 class="card-title" id="config-title">リマインド設定</h2>
+            <p class="card-subtitle">初期設定が表示されています。内容を変更したら、左の「設定を配信を有効にする」を押すと、すべての設定が保存され配信が始まります。入力欄にはカンマ（,）は使えません。</p>
+            <div class="card-body">
+                <div class="setting-list" id="settingList"></div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">コピーしました</div>
+
+<script>
+    (function () {
+    var bootstrapData = null;
+    var openRowId = null;
+    var systemDraft = null;
+    var draftByReminderId = {};
+    var dispatchPreviewTimer = null;
+    var pageLoading = document.getElementById('pageLoading');
+    var panels = document.getElementById('panels');
+    var settingList = document.getElementById('settingList');
+    var webhookUrlInput = document.getElementById('webhookUrlInput');
+    var webhookSaveBtn = document.getElementById('webhookSaveBtn');
+    var webhookLoading = document.getElementById('webhookLoading');
+    var webhookError = document.getElementById('webhookError');
+    var webhookSuccess = document.getElementById('webhookSuccess');
+    var createBtn = document.getElementById('createBtn');
+    var messageText = document.getElementById('messageText');
+    var createLoading = document.getElementById('createLoading');
+    var createError = document.getElementById('createError');
+    var createSuccess = document.getElementById('createSuccess');
+    var triggerStatusBody = document.getElementById('triggerStatusBody');
+    var triggerSetupBtn = document.getElementById('triggerSetupBtn');
+    var triggerLoading = document.getElementById('triggerLoading');
+    var triggerError = document.getElementById('triggerError');
+    var triggerSuccess = document.getElementById('triggerSuccess');
+    var toast = document.getElementById('toast');
+    var toastTimer = null;
+    var defaultMessageText = '# 周知\n週報 / シフト表 / 勤務表\n============================';
+
+    function showToast(message) {
+    toast.textContent = message || 'コピーしました';
+    toast.classList.add('visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.remove('visible'); }, 1800);
+}
+
+    function showBanner(el, message) {
+    el.textContent = message || '';
+    el.classList.toggle('visible', !!message);
+}
+
+    function setInlineLoading(el, btn, isLoading) {
+    el.classList.toggle('visible', isLoading);
+    btn.disabled = isLoading;
+}
+
+    function escapeHtml(text) {
+    return String(text || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+    function formatEnabledLabel(enabled) {
+    return enabled ? 'はい' : 'いいえ';
+}
+
+    function formatMentionAllLabel(mentionAll) {
+    return mentionAll ? 'する' : 'しない';
+}
+
+    function buildSystemPreview(values) {
+    return [
+    'グループID: ' + values.groupId,
+    'グループ名: ' + values.groupName,
+    '配信時刻: 毎日 ' + values.dispatchHour + ':' + String(values.dispatchMinute).padStart(2, '0') + '（' + values.dispatchTimezone + '）',
+    '全員にメンション: ' + formatMentionAllLabel(values.mentionAll),
+    ].join('\n');
+}
+
+    function buildReminderPreview(values, hasDayOfMonth) {
+    var lines = [
+    '有効: ' + formatEnabledLabel(values.enabled),
+    'タイトル: ' + values.title,
+    '本文: ' + values.bodyText,
+    ];
+    if (hasDayOfMonth) {
+    lines.push('毎月の送信日: ' + values.dayOfMonth + '日');
+}
+    lines.push(
+    '期限: ' + values.deadlineText,
+    'リンク表示名: ' + values.linkLabel,
+    'リンクURL: ' + values.linkUrl
+    );
+    return lines.join('\n');
+}
+
+    function renderSystemForm(values) {
+    return '' +
+    '<div class="field"><label class="field-label">グループID（識別用）</label>' +
+    '<input type="text" data-field="groupId" value="' + escapeHtml(values.groupId) + '"></div>' +
+    '<div class="field"><label class="field-label">グループ名（表示用）</label>' +
+    '<input type="text" data-field="groupName" value="' + escapeHtml(values.groupName) + '"></div>' +
+    '<div class="field-grid">' +
+    '<div class="field"><label class="field-label">配信時刻（時）</label>' +
+    '<input type="number" data-field="dispatchHour" min="0" max="23" value="' + escapeHtml(values.dispatchHour) + '"></div>' +
+    '<div class="field"><label class="field-label">配信時刻（分）</label>' +
+    '<input type="number" data-field="dispatchMinute" min="0" max="59" value="' + escapeHtml(values.dispatchMinute) + '"></div>' +
+    '<div class="field"><label class="field-label">タイムゾーン</label>' +
+    '<input type="text" data-field="dispatchTimezone" value="' + escapeHtml(values.dispatchTimezone) + '"></div>' +
+    '</div>' +
+    '<label class="checkbox-row"><input type="checkbox" data-field="mentionAll"' +
+    (values.mentionAll ? ' checked' : '') + '><span>全員にメンション（@all）する</span></label>';
+}
+
+    function renderReminderForm(values, hasDayOfMonth) {
+    var dayField = hasDayOfMonth
+    ? '<div class="field"><label class="field-label">毎月の送信日</label>' +
+    '<input type="number" data-field="dayOfMonth" min="1" max="31" value="' + escapeHtml(values.dayOfMonth) + '"></div>'
+    : '';
+
+    return '' +
+    '<label class="checkbox-row"><input type="checkbox" data-field="enabled"' +
+    (values.enabled ? ' checked' : '') + '><span>このリマインドを有効にする</span></label>' +
+    '<div class="field"><label class="field-label">リマインドのタイトル</label>' +
+    '<input type="text" data-field="title" value="' + escapeHtml(values.title) + '"></div>' +
+    '<div class="field"><label class="field-label">送信する本文</label>' +
+    '<textarea data-field="bodyText">' + escapeHtml(values.bodyText) + '</textarea></div>' +
+    dayField +
+    '<div class="field"><label class="field-label">期限の表示文</label>' +
+    '<input type="text" data-field="deadlineText" value="' + escapeHtml(values.deadlineText) + '"></div>' +
+    '<div class="field"><label class="field-label">リンクの表示名</label>' +
+    '<input type="text" data-field="linkLabel" value="' + escapeHtml(values.linkLabel) + '"></div>' +
+    '<div class="field"><label class="field-label">リンクのURL</label>' +
+    '<input type="text" data-field="linkUrl" value="' + escapeHtml(values.linkUrl) + '"></div>';
+}
+
+    function attachCommaGuard(rowEl) {
+    rowEl.querySelectorAll('[data-field]').forEach(function (el) {
+    if (el.type === 'checkbox' || el.type === 'number') {
+    return;
+}
+    el.addEventListener('input', function () {
+    var errorEl = rowEl.querySelector('[data-role="error"]');
+    if (String(el.value || '').indexOf(',') !== -1) {
+    showBanner(errorEl, 'カンマ（,）は使用できません');
+} else if (errorEl.textContent === 'カンマ（,）は使用できません') {
+    showBanner(errorEl, '');
+}
+});
+});
+}
+
+    function initDraftsFromBootstrap(data) {
+    systemDraft = Object.assign({}, data.system.values);
+    draftByReminderId = {};
+    data.reminders.forEach(function (item) {
+    draftByReminderId[item.reminderId] = Object.assign({}, item.values);
+});
+}
+
+    function captureOpenRowDraft() {
+    if (!openRowId) {
+    return;
+}
+
+    var row = settingList.querySelector('[data-row-id="' + openRowId + '"]');
+    if (!row) {
+    return;
+}
+
+    var payload = readRowPayload(row);
+    if (openRowId === 'system') {
+    systemDraft = payload;
+} else {
+    draftByReminderId[openRowId] = payload;
+}
+}
+
+    function scheduleDispatchPlanPreviewRefresh() {
+    clearTimeout(dispatchPreviewTimer);
+    dispatchPreviewTimer = setTimeout(function () {
+    renderDispatchPlanPreview(bootstrapData && bootstrapData.triggers);
+}, 120);
+}
+
+    function persistRowDraft(rowId) {
+    var row = settingList.querySelector('[data-row-id="' + rowId + '"]');
+    if (!row) {
+    return;
+}
+
+    var payload = readRowPayload(row);
+    if (rowId === 'system') {
+    systemDraft = payload;
+    updateRowDisplay(
+    'system',
+    buildSystemPreview(payload),
+    bootstrapData && bootstrapData.system.hasOverride
+    );
+} else {
+    draftByReminderId[rowId] = payload;
+    var item = bootstrapData && bootstrapData.reminders.find(function (r) {
+    return r.reminderId === rowId;
+});
+    updateRowDisplay(
+    rowId,
+    buildReminderPreview(payload, item && item.hasDayOfMonth),
+    item && item.hasOverride
+    );
+}
+
+    scheduleDispatchPlanPreviewRefresh();
+}
+
+    function attachDraftSync(row, rowId, hasDayOfMonth) {
+    var sync = function () {
+    var payload = readRowPayload(row);
+    if (rowId === 'system') {
+    systemDraft = payload;
+    updateRowDisplay(
+    'system',
+    buildSystemPreview(payload),
+    bootstrapData && bootstrapData.system.hasOverride
+    );
+} else {
+    draftByReminderId[rowId] = payload;
+    updateRowDisplay(
+    rowId,
+    buildReminderPreview(payload, hasDayOfMonth),
+    bootstrapData && bootstrapData.reminders.some(function (r) {
+    return r.reminderId === rowId && r.hasOverride;
+})
+    );
+}
+
+    scheduleDispatchPlanPreviewRefresh();
+};
+
+    row.querySelectorAll('[data-field]').forEach(function (el) {
+    el.addEventListener('input', sync);
+    el.addEventListener('change', sync);
+});
+}
+
+    function hasCommaInObject(obj) {
+    return Object.keys(obj || {}).some(function (key) {
+    var value = obj[key];
+    if (typeof value === 'boolean') {
+    return false;
+}
+    return String(value || '').indexOf(',') !== -1;
+});
+}
+
+    function hasCommaInAllSettings() {
+    captureOpenRowDraft();
+    if (hasCommaInObject(systemDraft)) {
+    return true;
+}
+    return Object.keys(draftByReminderId).some(function (reminderId) {
+    return hasCommaInObject(draftByReminderId[reminderId]);
+});
+}
+
+    function collectAllSettingsPayload() {
+    captureOpenRowDraft();
+
+    var reminders = bootstrapData.reminders.map(function (item) {
+    return Object.assign(
+{ reminderId: item.reminderId },
+    draftByReminderId[item.reminderId] || item.values
+    );
+});
+
+    return {
+    system: Object.assign({}, systemDraft),
+    reminders: reminders,
+};
+}
+
+    function refreshAfterBulkSave(result) {
+    openRowId = null;
+    bootstrapData.system = result.system;
+    bootstrapData.reminders = result.reminders;
+    bootstrapData.triggers = result.triggers;
+    renderSettingList(bootstrapData);
+    renderDispatchPlanPreview(result.triggers);
+}
+
+    function normalizeReminderForCompare(values, hasDayOfMonth) {
+    var result = {
+    enabled: values.enabled === true || values.enabled === 'true',
+    title: String(values.title || '').trim(),
+    bodyText: String(values.bodyText || '').trim(),
+    deadlineText: String(values.deadlineText || '').trim(),
+    linkLabel: String(values.linkLabel || '').trim(),
+    linkUrl: String(values.linkUrl || '').trim(),
+};
+
+    if (hasDayOfMonth) {
+    result.dayOfMonth = Number(values.dayOfMonth);
+}
+
+    return result;
+}
+
+    function reminderValuesMatchDefaults(values, defaults, hasDayOfMonth) {
+    return JSON.stringify(
+    normalizeReminderForCompare(values, hasDayOfMonth)
+    ) === JSON.stringify(
+    normalizeReminderForCompare(defaults, hasDayOfMonth)
+    );
+}
+
+    function getReminderSettingKind(item) {
+    var draft = draftByReminderId[item.reminderId];
+    var values = draft || item.values;
+    return reminderValuesMatchDefaults(values, item.defaults, item.hasDayOfMonth)
+    ? '初期設定'
+    : 'カスタム';
+}
+
+    function buildDispatchScheduleLabel(dispatchValues) {
+    return '毎日 ' +
+    dispatchValues.dispatchHour + ':' +
+    String(dispatchValues.dispatchMinute).padStart(2, '0') +
+    '（' + dispatchValues.dispatchTimezone + '）';
+}
+
+    function renderDispatchPlanPreview(triggerStatus) {
+    if (!triggerStatus) {
+    triggerStatusBody.innerHTML = '<div class="trigger-status-empty">配信情報を取得できませんでした。</div>';
+    return;
+}
+
+    if (bootstrapData) {
+    bootstrapData.triggers = triggerStatus;
+}
+
+    captureOpenRowDraft();
+
+    var html = '';
+    if (triggerStatus.dispatchRegistered) {
+    html += '<div class="trigger-badge">配信トリガー登録済み</div>';
+} else {
+    html += '<div class="trigger-badge" style="background:#eef0f3;color:#6e6e73;">配信トリガー未登録</div>';
+}
+
+    html += '<div class="dispatch-plan-list">';
+    html += '<div class="dispatch-plan-heading">配信予定の内容</div>';
+
+    if (bootstrapData) {
+    var dispatchValues = systemDraft || bootstrapData.system.values;
+    html += '<div class="dispatch-plan-schedule">' +
+    escapeHtml(buildDispatchScheduleLabel(dispatchValues)) +
+    '</div>';
+
+    bootstrapData.reminders.forEach(function (item) {
+    var draft = draftByReminderId[item.reminderId];
+    var values = draft || item.values;
+    var kind = getReminderSettingKind(item);
+    var enabled = values.enabled === true || values.enabled === 'true';
+    var disabledNote = enabled ? '' : '<span class="dispatch-plan-disabled">配信しない</span>';
+
+    html += '<div class="dispatch-plan-row">';
+    html += '<div class="dispatch-plan-name">' +
+    escapeHtml(item.label) +
+    disabledNote +
+    '</div>';
+    html += '<div class="dispatch-plan-kind' + (kind === 'カスタム' ? ' is-custom' : '') + '">' +
+    escapeHtml(kind) +
+    '</div>';
+    html += '</div>';
+});
+} else {
+    html += '<div class="trigger-status-empty">リマインド設定を読み込み中です。</div>';
+}
+
+    html += '</div>';
+    triggerStatusBody.innerHTML = html;
+}
+
+    function createSettingRow(config) {
+    var row = document.createElement('div');
+    row.className = 'setting-row';
+    row.setAttribute('data-row-id', config.rowId);
+
+    row.innerHTML =
+    '<button type="button" class="setting-row-header">' +
+    '<div class="setting-row-title-row">' +
+    '<span class="setting-row-title">' + escapeHtml(config.title) + '</span>' +
+    '<span class="badge ' + (config.hasOverride ? 'badge-custom' : 'badge-default') + '">' +
+    (config.hasOverride ? '変更済み' : '初期設定') +
+    '</span>' +
+    '</div>' +
+    '<div class="setting-row-preview">' + escapeHtml(config.preview) + '</div>' +
+    '</button>' +
+    '<div class="setting-row-body">' +
+    config.formHtml +
+    '<div class="error-banner" data-role="error"></div>' +
+    '<div class="setting-row-actions">' +
+    '<button type="button" class="btn btn-secondary" data-action="cancel">閉じる</button>' +
+    '</div>' +
+    '</div>';
+
+    row.querySelector('.setting-row-header').addEventListener('click', function () {
+    toggleRow(config.rowId);
+});
+
+    row.querySelector('[data-action="cancel"]').addEventListener('click', function (e) {
+    e.stopPropagation();
+    closeRow(config.rowId);
+});
+
+    attachCommaGuard(row);
+    attachDraftSync(row, config.rowId, config.hasDayOfMonth);
+    return row;
+}
+
+    function toggleRow(rowId) {
+    if (openRowId === rowId) {
+    closeRow(rowId);
+    return;
+}
+    if (openRowId) {
+    closeRow(openRowId);
+}
+    openRowId = rowId;
+    var row = settingList.querySelector('[data-row-id="' + rowId + '"]');
+    if (row) {
+    row.classList.add('open');
+}
+}
+
+    function closeRow(rowId) {
+    persistRowDraft(rowId);
+    var row = settingList.querySelector('[data-row-id="' + rowId + '"]');
+    if (row) {
+    row.classList.remove('open');
+    row.querySelector('[data-role="error"]').classList.remove('visible');
+}
+    if (openRowId === rowId) {
+    openRowId = null;
+}
+}
+
+    function readRowPayload(rowEl) {
+    var payload = {};
+    rowEl.querySelectorAll('[data-field]').forEach(function (el) {
+    var key = el.getAttribute('data-field');
+    if (el.type === 'checkbox') {
+    payload[key] = el.checked;
+} else {
+    payload[key] = el.value;
+}
+});
+    return payload;
+}
+
+    function updateRowDisplay(rowId, preview, hasOverride) {
+    var row = settingList.querySelector('[data-row-id="' + rowId + '"]');
+    if (!row) {
+    return;
+}
+    row.querySelector('.setting-row-preview').textContent = preview;
+    var badge = row.querySelector('.badge');
+    badge.textContent = hasOverride ? '変更済み' : '初期設定';
+    badge.className = 'badge ' + (hasOverride ? 'badge-custom' : 'badge-default');
+}
+
+    function initFromBootstrap(data) {
+    webhookUrlInput.value = data.webhookUrl || '';
+    renderSettingList(data);
+    renderDispatchPlanPreview(data.triggers);
+    pageLoading.hidden = true;
+    panels.hidden = false;
+}
+
+    function renderSettingList(data) {
+    openRowId = null;
+    settingList.innerHTML = '';
+    bootstrapData = data;
+    initDraftsFromBootstrap(data);
+
+    var systemRow = createSettingRow({
+    rowId: 'system',
+    type: 'system',
+    title: '共通設定',
+    hasOverride: data.system.hasOverride,
+    preview: buildSystemPreview(data.system.values),
+    formHtml: renderSystemForm(data.system.values),
+});
+    settingList.appendChild(systemRow);
+
+    data.reminders.forEach(function (item) {
+    var row = createSettingRow({
+    rowId: item.reminderId,
+    type: 'reminder',
+    reminderId: item.reminderId,
+    hasDayOfMonth: item.hasDayOfMonth,
+    title: item.label,
+    hasOverride: item.hasOverride,
+    preview: buildReminderPreview(item.values, item.hasDayOfMonth),
+    formHtml: renderReminderForm(item.values, item.hasDayOfMonth),
+});
+    settingList.appendChild(row);
+});
+}
+
+    webhookSaveBtn.addEventListener('click', function () {
+    showBanner(webhookError, '');
+    webhookSuccess.classList.remove('visible');
+    setInlineLoading(webhookLoading, webhookSaveBtn, true);
+
+    var value = String(webhookUrlInput.value || '').trim();
+    if (!value) {
+    setInlineLoading(webhookLoading, webhookSaveBtn, false);
+    showBanner(webhookError, '連携用URLを入力してください');
+    return;
+}
+
+    google.script.run
+    .withSuccessHandler(function (result) {
+    setInlineLoading(webhookLoading, webhookSaveBtn, false);
+    webhookUrlInput.value = result.webhookUrl || value;
+    webhookSuccess.classList.add('visible');
+})
+    .withFailureHandler(function (err) {
+    setInlineLoading(webhookLoading, webhookSaveBtn, false);
+    showBanner(webhookError, err.message || String(err));
+})
+    .preparationUiSaveWebhookUrl(value);
+});
+
+    createBtn.addEventListener('click', function () {
+    showBanner(createError, '');
+    createSuccess.classList.remove('visible');
+    setInlineLoading(createLoading, createBtn, true);
+
+    var input = messageText.value;
+    var text = input && String(input).trim() ? String(input).trim() : defaultMessageText;
+
+    google.script.run
+    .withSuccessHandler(function () {
+    setInlineLoading(createLoading, createBtn, false);
+    createSuccess.classList.add('visible');
+})
+    .withFailureHandler(function (err) {
+    setInlineLoading(createLoading, createBtn, false);
+    showBanner(createError, err.message || String(err));
+})
+    .preparationUiCreateThread({
+    messageText: text,
+});
+});
+
+    triggerSetupBtn.addEventListener('click', function () {
+    showBanner(triggerError, '');
+    triggerSuccess.classList.remove('visible');
+
+    if (hasCommaInAllSettings()) {
+    showBanner(triggerError, 'カンマ（,）は使用できません。入力内容を確認してください。');
+    return;
+}
+
+    setInlineLoading(triggerLoading, triggerSetupBtn, true);
+
+    google.script.run
+    .withSuccessHandler(function (result) {
+    setInlineLoading(triggerLoading, triggerSetupBtn, false);
+    refreshAfterBulkSave(result);
+    triggerSuccess.classList.add('visible');
+})
+    .withFailureHandler(function (err) {
+    setInlineLoading(triggerLoading, triggerSetupBtn, false);
+    showBanner(triggerError, err.message || String(err));
+})
+    .preparationUiSaveAllSettingsAndEnableDispatch(collectAllSettingsPayload());
+});
+
+    document.addEventListener('click', function (e) {
+    if (!openRowId) {
+    return;
+}
+
+    var row = settingList.querySelector('[data-row-id="' + openRowId + '"]');
+    if (!row || row.contains(e.target)) {
+    return;
+}
+
+    closeRow(openRowId);
+});
+
+    google.script.run
+    .withSuccessHandler(initFromBootstrap)
+    .withFailureHandler(function (err) {
+    pageLoading.textContent = '読み込みに失敗しました: ' + (err.message || String(err));
+})
+    .preparationUiGetBootstrapData();
+})();
+</script>
+</body>
+</html>
