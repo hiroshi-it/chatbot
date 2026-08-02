@@ -1,102 +1,70 @@
 /**
- * メッセージ組み立て処理。
+ * 日付判定処理。
  *
- * 引数にはConfigBuilderが生成した実行時reminder項目を渡す。
- * message.bodyLines/message.linkはConfigBuilder側で正規化済みであること。
+ * 実行時reminder項目のscheduleをもとに、
+ * 指定日が送信対象日かどうかを判定する。
  */
 
 /**
- * リンク行を表示するかどうかを判定する。
+ * 指定されたscheduleが対象日に該当するかどうかを判定する。
  *
- * link.enabledがtrueかつlink.urlが空でない場合のみ表示する。
+ * weeklyの場合はコード固定の曜日で判定する。
+ * monthlyの場合はschedule.dayOfMonthで判定する。
+ * lastDayOfMonthの場合は月末日で判定する。
  *
- * @param {Object|null|undefined} link リンク設定
- * @returns {boolean}
+ * @param {Object|null|undefined} schedule スケジュール設定
+ * @param {Date} [today] 判定対象日
+ * @returns {boolean} 送信対象日の場合true
  */
-function needsLinkLine(link) {
-  if (!link || link.enabled === false) {
+function isScheduledToday(schedule, today) {
+  if (!schedule || !schedule.type) {
     return false;
   }
 
-  const url = link.url ? String(link.url).trim() : '';
+  const date = today || getTodayDate();
+  const type = schedule.type;
 
-  return link.enabled === true && url !== '';
-}
-
-/**
- * Google Chat用のリンク行を生成する。
- *
- * @param {Object} link リンク設定
- * @returns {string}
- */
-function buildLinkLine(link) {
-  const url = String(link.url).trim();
-  const label = link.label && String(link.label).trim() ? String(link.label).trim() : url;
-  const prefix = link.prefix && String(link.prefix).trim() ? String(link.prefix).trim() : '提出先: ';
-
-  return prefix + '<' + url + '|' + label + '>';
-}
-
-/**
- * reminder項目からメッセージ情報を取得する。
- *
- * @param {Object} item reminder項目
- * @returns {{bodyLines:string[],deadlineText:string,link:Object|null}}
- */
-function resolveMessage(item) {
-  const message = item.message || {};
-
-  return {
-    bodyLines: Array.isArray(message.bodyLines) ? message.bodyLines : [],
-    deadlineText: message.deadlineText ? String(message.deadlineText).trim() : '',
-    link: message.link || null,
-  };
-}
-
-/**
- * Google Chatに送信する本文を組み立てる。
- *
- * mentionAllはitem.chat.mentionAllを優先し、未設定時はconfig.chat.mentionAllを使用する。
- *
- * @param {Object} item reminder項目
- * @param {Object} config 実行時設定
- * @returns {string}
- */
-function composeMessage(item, config) {
-  const chatConfig = config.chat || {};
-  const content = resolveMessage(item);
-  const blocks = [];
-
-  const mentionAll =
-      item.chat && typeof item.chat.mentionAll === 'boolean'
-          ? item.chat.mentionAll
-          : chatConfig.mentionAll;
-
-  if (mentionAll) {
-    blocks.push('<users/all>');
+  if (type === 'weekly') {
+    return date.getDay() === WEEKLY_REPORT_DAY_OF_WEEK;
   }
 
-  content.bodyLines.forEach(function (line) {
-    const text = String(line).trim();
+  if (type === 'monthly') {
+    const dayOfMonth = Number(schedule.dayOfMonth);
 
-    if (text) {
-      blocks.push(text);
+    if (!Number.isInteger(dayOfMonth) || dayOfMonth < 1 || dayOfMonth > 31) {
+      Logger.log('[Schedule] 不正なdayOfMonth: ' + schedule.dayOfMonth);
+      return false;
     }
+
+    return date.getDate() === dayOfMonth;
+  }
+
+  if (type === 'lastDayOfMonth') {
+    return isLastDayOfMonth(date);
+  }
+
+  Logger.log('[Schedule] 未知のtype: ' + type);
+  return false;
+}
+
+/**
+ * 本日送信対象のreminder項目を抽出する。
+ *
+ * config.remindersはConfigBuilderで配列化済みであること。
+ * enabledがtrue、かつscheduleが本日に該当する項目のみ返す。
+ *
+ * @param {Object} config 実行時設定
+ * @param {Date} [today] 判定対象日
+ * @returns {Object[]} 本日送信対象のreminder項目
+ */
+function filterDueToday(config, today) {
+  if (!config || !Array.isArray(config.reminders)) {
+    return [];
+  }
+
+  const date = today || getTodayDate(config.dispatch && config.dispatch.timezone);
+
+  return config.reminders.filter(function (item) {
+    return item.enabled === true && isScheduledToday(item.schedule, date);
   });
-
-  if (content.deadlineText) {
-    blocks.push('*期限：' + content.deadlineText + '*');
-  }
-
-  if (needsLinkLine(content.link)) {
-    blocks.push(buildLinkLine(content.link));
-  }
-
-  const text = blocks.join('\n').trim();
-
-  if (!text) {
-    throw new Error('送信メッセージが空です。reminderId=' + (item.reminderId || ''));
-  }
-
-  return text;
 }

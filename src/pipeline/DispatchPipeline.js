@@ -88,7 +88,7 @@ function runDispatchPipeline(options) {
 /**
  * 実行時configを読み込む。
  *
- * app.config.htmlから生成した実行時configを返す。
+ * デフォルト設定 + Script Properties から生成した実行時configを返す。
  *
  * @returns {Object} 実行時config
  */

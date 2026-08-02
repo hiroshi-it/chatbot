@@ -1,7 +1,7 @@
 /**
  * 設定検証処理。
  *
- * app.config.html から生成した実行時configを検証する。
+ * デフォルト設定 + Script Properties から生成した実行時configを検証する。
  * エラーがある場合は例外を投げず、エラーメッセージ配列として返す。
  */
 
@@ -36,28 +36,28 @@ function validateConfig(config) {
     }
 
     if (!config.dispatch) {
-        errors.push('dispatchが未設定です（app.config.html）');
+        errors.push('dispatchが未設定です（デフォルト / Script Properties）');
     } else {
         if (config.dispatch.hour === undefined || config.dispatch.hour === null || config.dispatch.hour === '') {
-            errors.push('dispatch.hourが未設定です（app.config.html）');
+            errors.push('dispatch.hourが未設定です（デフォルト / Script Properties）');
         }
         if (config.dispatch.minute === undefined || config.dispatch.minute === null || config.dispatch.minute === '') {
-            errors.push('dispatch.minuteが未設定です（app.config.html）');
+            errors.push('dispatch.minuteが未設定です（デフォルト / Script Properties）');
         }
         if (!config.dispatch.timezone) {
-            errors.push('dispatch.timezoneが未設定です（app.config.html）');
+            errors.push('dispatch.timezoneが未設定です（デフォルト / Script Properties）');
         }
     }
 
     const webhook = resolveWebhookUrl(config.chat || {});
     if (!webhook) {
         errors.push(
-            'Webhook URLが未設定です（Script Properties: CHAT_WEBHOOK_URL、または app.config.html の chat.webhookUrl）'
+            'Webhook URLが未設定です（Script Properties: CHAT_WEBHOOK_URL）'
         );
     }
 
     if (!Array.isArray(config.reminders) || config.reminders.length === 0) {
-        errors.push('remindersが空です（app.config.html）');
+        errors.push('remindersが空です（デフォルト / Script Properties）');
         return errors;
     }
 

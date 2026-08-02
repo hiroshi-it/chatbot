@@ -1,7 +1,7 @@
 /**
- * app.config.html から実行時 config を生成する。
+ * デフォルト設定 + Script Properties（PREP_*）から実行時 config を生成する。
  *
- * すべての reminder 設定（文案・日程・期限）は JSON のみで管理する。
+ * すべての reminder 設定（文書・日程・期限）は Properties またはデフォルト値で管理する。
  * 週報の送信曜日のみコード固定（WEEKLY_REPORT_DAY_OF_WEEK）。
  */
 
@@ -23,7 +23,7 @@ function parseConfigNumber(value) {
 
 function requireConfigString(jsonDef, key, context) {
   if (!jsonDef || jsonDef[key] === '' || jsonDef[key] === null || jsonDef[key] === undefined) {
-    throw new Error('app.config.html に未設定: ' + key + '（' + context + '）');
+    throw new Error('設定が未設定です（デフォルト / Script Properties）: ' + key + '（' + context + '）');
   }
   return String(jsonDef[key]).trim();
 }
@@ -32,9 +32,9 @@ function buildLinkFromJson(jsonDef) {
   const url = jsonDef.linkUrl ? String(jsonDef.linkUrl).trim() : '';
   const label = jsonDef.linkLabel ? String(jsonDef.linkLabel).trim() : '';
   const enabled =
-    jsonDef.linkEnabled !== undefined && jsonDef.linkEnabled !== null && jsonDef.linkEnabled !== ''
-      ? parseConfigBool(jsonDef.linkEnabled)
-      : url !== '';
+      jsonDef.linkEnabled !== undefined && jsonDef.linkEnabled !== null && jsonDef.linkEnabled !== ''
+          ? parseConfigBool(jsonDef.linkEnabled)
+          : url !== '';
   return {
     enabled: enabled,
     url: url,
@@ -46,16 +46,26 @@ function resolveBodyLines(jsonDef, context) {
   if (jsonDef.bodyText !== undefined && jsonDef.bodyText !== null && String(jsonDef.bodyText).trim() !== '') {
     return parseBodyTextLines(String(jsonDef.bodyText).trim());
   }
-  if (jsonDef.description !== undefined && jsonDef.description !== null && String(jsonDef.description).trim() !== '') {
-    return parseBodyTextLines(String(jsonDef.description).trim());
+  if (jsonDef.title !== undefined && jsonDef.title !== null && String(jsonDef.title).trim() !== '') {
+    return parseBodyTextLines(String(jsonDef.title).trim());
   }
-  throw new Error('bodyText が未設定です（app.config.html）: ' + context);
+  throw new Error('bodyText が未設定です（デフォルト / Script Properties）: ' + context);
+}
+
+function resolveTitle(jsonDef, context) {
+  if (jsonDef && jsonDef.title !== undefined && jsonDef.title !== null && String(jsonDef.title).trim() !== '') {
+    return String(jsonDef.title).trim();
+  }
+  if (jsonDef && jsonDef.description !== undefined && jsonDef.description !== null && String(jsonDef.description).trim() !== '') {
+    return String(jsonDef.description).trim();
+  }
+  throw new Error('設定が未設定です（デフォルト / Script Properties）: title（' + context + '）');
 }
 
 function buildWeeklyReminder(jsonDef) {
   return {
     reminderId: 'weeklyReport',
-    name: requireConfigString(jsonDef, 'description', 'weeklyReport'),
+    title: resolveTitle(jsonDef, 'weeklyReport'),
     enabled: jsonDef.enabled !== false,
     schedule: {
       type: 'weekly',
@@ -72,12 +82,12 @@ function buildMonthlyReminder(reminderId, jsonDef) {
   const dayOfMonth = parseConfigNumber(requireConfigString(jsonDef, 'dayOfMonth', reminderId));
 
   if (!Number.isInteger(dayOfMonth) || dayOfMonth < 1 || dayOfMonth > 31) {
-    throw new Error('dayOfMonth が不正です（app.config.html）: ' + reminderId);
+    throw new Error('dayOfMonth が不正です（デフォルト / Script Properties）: ' + reminderId);
   }
 
   return {
     reminderId: reminderId,
-    name: requireConfigString(jsonDef, 'description', reminderId),
+    title: resolveTitle(jsonDef, reminderId),
     enabled: jsonDef.enabled !== false,
     schedule: {
       type: 'monthly',
@@ -94,7 +104,7 @@ function buildMonthlyReminder(reminderId, jsonDef) {
 function buildLastDayReminder(reminderId, jsonDef) {
   return {
     reminderId: reminderId,
-    name: requireConfigString(jsonDef, 'description', reminderId),
+    title: resolveTitle(jsonDef, reminderId),
     enabled: jsonDef.enabled !== false,
     schedule: {
       type: 'lastDayOfMonth',

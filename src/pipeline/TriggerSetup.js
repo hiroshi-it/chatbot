@@ -15,12 +15,12 @@ const DISPATCH_HANDLER = 'dailyReminderDispatcher';
  */
 function removeDispatchTriggers() {
   ScriptApp.getProjectTriggers()
-    .filter(function (t) {
-      return t.getHandlerFunction() === DISPATCH_HANDLER;
-    })
-    .forEach(function (t) {
-      ScriptApp.deleteTrigger(t);
-    });
+      .filter(function (t) {
+        return t.getHandlerFunction() === DISPATCH_HANDLER;
+      })
+      .forEach(function (t) {
+        ScriptApp.deleteTrigger(t);
+      });
 }
 
 /**
@@ -33,14 +33,14 @@ function removeDispatchTriggers() {
  * @returns {number} 補正後の分
  */
 function snapNearMinute(minute) {
-  const valid = [0, 15, 30, 45];
+  const valid = [0, 15, 30, 55];
   return valid.indexOf(minute) !== -1 ? minute : 0;
 }
 
 /**
  * 配信用Triggerを作成する。
  *
- * app.config.htmlのdispatch設定をもとに、
+ * デフォルト設定 + Script Properties の dispatch 設定をもとに、
  * dailyReminderDispatcherを毎日実行する時間主導型Triggerを登録する。
  *
  * 作成前に既存Triggerを削除し、重複実行を防ぐ。
@@ -55,19 +55,68 @@ function installDispatchTrigger() {
   removeDispatchTriggers();
 
   ScriptApp.newTrigger(DISPATCH_HANDLER)
-    .timeBased()
-    .everyDays(1)
-    .atHour(hour)
-    .nearMinute(minute)
-    .inTimezone(timezone)
-    .create();
+      .timeBased()
+      .everyDays(1)
+      .atHour(hour)
+      .nearMinute(minute)
+      .inTimezone(timezone)
+      .create();
 }
 
 /**
  * 配信用Triggerのセットアップ入口。
  *
  * GASエディタから手動実行し、Triggerを登録・更新する。
+ * 初回または appsscript.json 更新後は、実行時の承認ダイアログで権限を許可すること。
  */
 function setupDispatchTrigger() {
   installDispatchTrigger();
+  Logger.log('[Trigger] dailyReminderDispatcherを登録しました');
+}
+
+/**
+ * UI 表示用にプロジェクト内 Trigger 一覧を返す。
+ *
+ * @returns {Object[]}
+ */
+function listProjectTriggersSnapshot() {
+  return ScriptApp.getProjectTriggers().map(function (trigger) {
+    return {
+      handlerFunction: trigger.getHandlerFunction(),
+      eventType: String(trigger.getEventType()),
+      triggerSource: String(trigger.getTriggerSource()),
+      uniqueId: trigger.getUniqueId(),
+      isDispatchTrigger: trigger.getHandlerFunction() === DISPATCH_HANDLER,
+    };
+  });
+}
+
+/**
+ * 配信 Trigger の UI 向け状態を返す。
+ *
+ * @returns {Object}
+ */
+function getDispatchTriggerUiStatus() {
+  const triggers = listProjectTriggersSnapshot();
+  const config = getAppConfig();
+  const dispatch = config.dispatch || {};
+  const hour = dispatch.hour !== undefined && dispatch.hour !== null ? dispatch.hour : 19;
+  const minute = dispatch.minute !== undefined && dispatch.minute !== null ? dispatch.minute : 0;
+  const timezone = dispatch.timezone || 'Asia/Tokyo';
+  const dispatchTriggers = triggers.filter(function (item) {
+    return item.isDispatchTrigger;
+  });
+
+  return {
+    plannedSchedule: {
+      handlerFunction: DISPATCH_HANDLER,
+      hour: hour,
+      minute: minute,
+      timezone: timezone,
+      label: '毎日 ' + hour + ':' + String(minute).padStart(2, '0') + '（' + timezone + '）',
+    },
+    triggers: triggers,
+    dispatchRegistered: dispatchTriggers.length > 0,
+    dispatchTriggerCount: dispatchTriggers.length,
+  };
 }

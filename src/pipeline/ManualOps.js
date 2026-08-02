@@ -13,10 +13,7 @@
  * @returns {GoogleAppsScript.URL_Fetch.HTTPResponse}
  */
 function createAnnouncementThread() {
-    const config = getActiveConfig();
-    const text = '# *周知*\n============================';
-
-    return sendToSpace(text, config);
+    return createThreadAndGetId().message;
 }
 
 /**
