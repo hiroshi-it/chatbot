@@ -7,7 +7,6 @@ Google Chat定期リマインドBot（Google Apps Script + `app.config.html` 設
 | ディレクトリ | 用途 |
 |-------------|------|
 | [`src/`](src/README.md) | GASソースコード（clasp push対象） |
-| [`config/`](config/FIELDS.md) | `app.config.html` 項目定義・改行の書き方 |
 | [`docs/architecture/PATH.md`](docs/architecture/PATH.md) | ディレクトリ構成 |
 | [`docs/design/详细设计文档.md`](docs/design/详细设计文档.md) | 詳細設計（中国語） |
 
@@ -60,8 +59,6 @@ JSON 文字列内の **`\n`** は、パース後に実際の改行文字にな�
 
 - **`bodyText`**：`parseBodyTextLines` で行分割され、Google Chat で複数行表示される（推奨）
 - **`linkLabel` / `deadlineText`**：1 行想定。`\n` ではリンク表示名の改行にはならない
-
-詳細は [`config/FIELDS.md`](config/FIELDS.md) を参照。
 
 ### Script Properties
 
