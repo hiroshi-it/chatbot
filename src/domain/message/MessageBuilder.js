@@ -95,7 +95,7 @@ function composeMessage(item, config) {
   const text = blocks.join('\n').trim();
 
   if (!text) {
-    throw new Error('送信メッセージが空です。reminderId=' + (item.reminderId || item.id || ''));
+    throw new Error('送信メッセージが空です。reminderId=' + (item.reminderId || ''));
   }
 
   return text;
