@@ -3,10 +3,10 @@
  *
  * 0 = 日曜, 1 = 月曜, ... 5 = 金曜, 6 = 土曜
  *
- * この値はコード固定とし、JSON / Sheet からは変更不可とする。
+ * この値はコード固定とし、JSON からは変更不可とする。
  * 理由：
  * - 運用上、週次リマインドの曜日は全グループ共通とするため
- * - Sheet 側の入力ミスによる配信曜日のブレを防ぐため
+ * - 設定ファイル側の入力ミスによる配信曜日のブレを防ぐため
  */
 var WEEKLY_REPORT_DAY_OF_WEEK = 5;
 
@@ -50,7 +50,7 @@ function getReminderType(reminderId) {
 /**
  * 定義済みのreminderId一覧を取得する。
  *
- * Sheet側のreminderIdバリデーションやREADME出力などで使用する。
+ * app.config.htmlのreminderIdバリデーションやREADME出力などで使用する。
  *
  * @returns {string[]} reminderId 一覧
  */

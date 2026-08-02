@@ -1,5 +1,5 @@
 {
-  "_comment": "Botの固定設定。Sheet側の運用設定と合成して実行時設定を作成する。",
+  "_comment": "全設定はこのファイルで管理する。",
   "groupId": "default",
   "groupName": "デフォルト（全体ルーム）",
   "dispatch": {
@@ -9,47 +9,55 @@
     "timezone": "Asia/Tokyo"
   },
   "chat": {
-    "_comment": "Google Chatへの送信先設定。",
-    "webhookUrl": "",
     "threadName": "",
     "mentionAll": true
   },
   "reminders": {
-    "_comment": "各リマインドの固定設定。description、deadlineText、dayOfMonthはSheet側で管理する。",
     "weeklyReport": {
-      "_comment": "週次リマインド。送信曜日はコード固定。",
+      "_comment": "週次。送信曜日はコード固定（金曜）。",
       "enabled": true,
-      "bodyText": "定期報告のご提出をお願いいたします。",
-      "linkUrl": "",
-      "linkLabel": ""
+      "description": "週次報告リマインド",
+      "bodyText": "週報の提出をお願いします。",
+      "deadlineText": "翌週月曜10:00まで",
+      "linkLabel": "提出先リンクの表示名を設定してください。URLはcore/app.config.htmlファイルの_linkUrl_を修正してください。",
+      "linkUrl": "hiroshi-it.com"
     },
     "documentEarly": {
-      "_comment": "月次資料の事前リマインド。",
+      "_comment": "月次・事前（毎月 dayOfMonth 日に送信）。",
       "enabled": true,
-      "bodyText": "月次資料の提出期限が近付いておりますので、お忘れのないようお願いいたします。",
-      "linkUrl": "",
-      "linkLabel": ""
+      "description": "月次シフト表・事前リマインド",
+      "bodyText": "月次シフト表の事前提出をお願いします。",
+      "dayOfMonth": 17,
+      "deadlineText": "毎月20日まで",
+      "linkLabel": "提出先リンクの表示名を設定してください。URLはcore/app.config.htmlファイルの_linkUrl_を修正してください。",
+      "linkUrl": "hiroshi-it.com/tools"
     },
     "documentFinal": {
-      "_comment": "月次資料の正式リマインド。",
       "enabled": true,
-      "bodyText": "月次資料のご提出をお願いいたします。",
-      "linkUrl": "",
-      "linkLabel": ""
+      "description": "月次シフト表・正式リマインド",
+      "bodyText": "月次シフト表の正式提出をお願いします。",
+      "dayOfMonth": 20,
+      "deadlineText": "毎月20日まで",
+      "linkLabel": "提出先リンクの表示名を設定してください。URLはcore/app.config.htmlファイルの_linkUrl_を修正してください。",
+      "linkUrl": "hiroshi-it.com/courses"
     },
     "reportEarly": {
-      "_comment": "月次提出物の事前リマインド。",
       "enabled": true,
-      "bodyText": "月次提出物の提出期限が近付いておりますので、お忘れのないようお願いいたします。",
-      "linkUrl": "",
-      "linkLabel": ""
+      "description": "月次勤務表・事前リマインド",
+      "bodyText": "月次勤務表の事前提出をお願いします。",
+      "dayOfMonth": 27,
+      "deadlineText": "翌月1日正午まで",
+      "linkLabel": "提出先リンクの表示名を設定してください。URLはcore/app.config.htmlファイルの_linkUrl_を修正してください。",
+      "linkUrl": "hiroshi-it.com/practice"
     },
     "reportFinal": {
-      "_comment": "月末リマインド。送信日はコードで月末判定する。",
+      "_comment": "月末日に送信。",
       "enabled": true,
-      "bodyText": "月次提出物のご提出をお願いいたします。",
-      "linkUrl": "",
-      "linkLabel": ""
+      "description": "月次勤務表・正式リマインド",
+      "bodyText": "月次勤務表の正式提出をお願いします。",
+      "deadlineText": "翌月1日正午まで",
+      "linkLabel": "提出先リンクの表示名を設定してください。URLはcore/app.config.htmlファイルの_linkUrl_を修正してください。",
+      "linkUrl": "hiroshi-it.com/ai"
     }
   }
 }
