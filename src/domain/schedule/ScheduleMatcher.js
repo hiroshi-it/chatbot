@@ -28,6 +28,14 @@ function isScheduledToday(schedule, today) {
     return date.getDay() === WEEKLY_REPORT_DAY_OF_WEEK;
   }
 
+  /**
+   * Todo
+   * - 月次リマインドで指定日が存在しない月の場合、月末日に送信する
+   * - 指定日と当月の最終日を比較し、実際の送信対象日を決定する
+   * - 例：31日指定の場合、2月は28日（うるう年は29日）、6月は30日に送信する
+   * - 指定日が存在する月は、従来どおり指定日に送信する
+   * - 月次リマインドの送信日判定ロジックを修正する
+   */
   if (type === 'monthly') {
     const dayOfMonth = Number(schedule.dayOfMonth);
 
